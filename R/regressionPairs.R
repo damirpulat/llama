@@ -23,7 +23,7 @@ function(regressor=NULL, data=NULL, pre=function(x, y=NULL) { list(features=x) }
 
     totalBests = data.frame(target=factor(breakBestTies(data), levels=data$performance))
     combns = combn(data$performance, 2)
-    predictions = rbind.fill(parallelMap(function(i) {
+    predictions = rbind.fill(lapply(1:length(data$train), function(i) {
         trf = pre(data$data[data$train[[i]],][data$features])
         tsf = pre(data$data[data$test[[i]],][data$features], trf$meta)
         ids = data$data[data$test[[i]],][data$ids]
@@ -85,7 +85,7 @@ function(regressor=NULL, data=NULL, pre=function(x, y=NULL) { list(features=x) }
             }))
         }
         return(combinedpredictions)
-    }, 1:length(data$train), level = "llama.fold"))
+    }))
 
     fs = pre(data$data[data$features])
     fp = data$data[data$performance]

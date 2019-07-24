@@ -32,7 +32,7 @@ function(clusterer=NULL, data=NULL, bestBy="performance", pre=function(x, y=NULL
     bestfun = function(ss) { setNames(data.frame(as.table(innerbest(ss))), predNames) }
 
     i = 1 # prevent warning when checking package
-    predictions = rbind.fill(parallelMap(function(i) {
+    predictions = rbind.fill(lapply(1:length(data$train), function(i) {
         trf = pre(data$data[data$train[[i]],][data$features])
         tsf = pre(data$data[data$test[[i]],][data$features], trf$meta)
         ids = data$data[data$test[[i]],][data$ids]
@@ -107,7 +107,7 @@ function(clusterer=NULL, data=NULL, bestBy="performance", pre=function(x, y=NULL
             }))
         }
         return(combinedpredictions)
-    }, 1:length(data$train), level = "llama.fold"))
+    }))
 
     fs = pre(data$data[data$features])
     models = lapply(1:length(clusterer), function(i) {

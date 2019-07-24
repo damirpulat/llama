@@ -57,7 +57,7 @@ function(ldf, llama.fun, learner, design, metric = parscores, nfolds = 10L, quie
 tuneLlamaModel <-
 function(ldf, llama.fun, learner, design, metric, quiet) {
     # FIXME: we currently do not handle failed tuning evals
-    ys = parallelMap(function(x) {
+    ys = lapply(1:nrow(design), function(x) {
         pars = as.list(design[x,,drop = FALSE])
         learner = setHyperPars(learner, par.vals = pars)
         model = llama.fun(learner, ldf)
@@ -65,7 +65,7 @@ function(ldf, llama.fun, learner, design, metric, quiet) {
 
         if(!quiet) message(paste("      [", paste(names(pars), pars, sep = " = ", collapse = ", "), "], score = ", score, sep = ""))
         return(score)
-    }, 1:nrow(design), simplify = TRUE, level = "llama.tune")
+    }, simplify = TRUE)
 
     if(attr(metric, "minimize")) {
         best.i = getMinIndex(ys)
