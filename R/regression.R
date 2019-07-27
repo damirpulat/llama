@@ -1,5 +1,6 @@
 regression <-
 function(regressor=NULL, data=NULL, pre=function(x, y=NULL) { list(features=x) }, combine=NULL, expand=identity, save.models=NA, use.weights = TRUE) {
+    set.seed(1, "L'Ecuyer")
     if(!testClass(regressor, "Learner")) {
         stop("Need regressor!")
     }
